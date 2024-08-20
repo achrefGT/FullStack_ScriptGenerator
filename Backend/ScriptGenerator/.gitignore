@@ -1,0 +1,36 @@
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment variable files
+.env
+
+# IDE configuration files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Build and distribution files
+build/
+dist/
+*.egg-info/
+
+# Log files
+*.log
+
+# Test results
+.pytest_cache/
+nosetests.xml
+coverage.xml
+
+# Database files
+*.sqlite3
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Uploaded files
+media

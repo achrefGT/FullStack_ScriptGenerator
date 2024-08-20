@@ -1,0 +1,33 @@
+h2 {
+  font-size: 2.5rem; /* Larger font size */
+  font-weight: 100; /* Bold font weight */
+  text-align: center; /* Center align text */
+  color: #403438; /* Dark gray color */
+  margin-bottom: 1.5rem; /* Space below the title */
+  -webkit-background-clip: text; /* Clip background to text */
+  -webkit-text-fill-color: transparent; /* Make text color transparent to show gradient */
+  text-shadow: 1px 1px 1px 		#D80030; /* Subtle shadow for depth */
+  padding: 0.5rem; /* Padding around the text */
+  letter-spacing: 4px;
+}
+
+.btn-custom-outline {
+  color: #489090;
+  border-color: #489090;
+  background-color: #ffffff; /* Default background color */
+}
+
+.btn-custom-outline:hover {
+  color: #ffffff; /* Text color on hover */
+  background-color: #489090; /* Background color on hover */
+  border-color: #489090; /* Border color on hover */
+}
+
+.custom-file-input {
+  border: 1px dashed #489090; 
+  border-radius: 0.5rem; 
+  padding: 0.5rem; 
+  background-color: #f8f9fa; 
+  margin-bottom: 20px; 
+}
+
