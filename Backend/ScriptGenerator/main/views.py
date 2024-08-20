@@ -4,7 +4,11 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from .models import Router, PhysicalInterface, Interface2G, Interface3G, Interface4G, ManagementInterface, Script, LowLevelDesign, LowLevelDesign_Co_trans,RadioSite
 from .forms import LowLevelDesignForm
-import pandas as pd
+import pandas as pd # type: ignore
+from django.contrib.auth.models import User
+from rest_framework import generics # type: ignore
+from .serializers import UserSerializer
+from rest_framework.permissions import IsAuthenticated, AllowAny # type: ignore
 
 
 IP_PLAN_COLUMNS = {
@@ -53,6 +57,10 @@ def index(request):
     form = LowLevelDesignForm()  # Instantiate the form
     return render(request, "main/base.html", {'form': form})
 
+class CreateUserView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
 
 @require_POST
 def download_script(request):
