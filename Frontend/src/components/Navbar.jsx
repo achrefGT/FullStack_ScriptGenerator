@@ -13,7 +13,7 @@ const Navbar = () => {
                             <a className="nav-link" href="#">My scripts</a>
                         </li>
                     </ul>
-                    <a className="btn btn-outline-secondary" href="/admin/" role="button">Admin</a>
+                    <a className="btn btn-custom-outline" href="/logout" role="button">logout</a>
                 </div>
             </div>
         </nav>

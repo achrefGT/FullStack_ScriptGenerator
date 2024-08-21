@@ -1,36 +1,173 @@
+/* Container for the form and image */
+.form-image-container {
+  display: flex;
+  margin: 100px auto; /* Center the container horizontally */
+  padding: 0;
+  max-width: 800px; /* Set a maximum width for the entire container */
+}
+
+/* Container for the form and image content */
+.form-content {
+  display: flex;
+  width: 100%;
+  border-radius: 5px;
+}
+
+/* Form container styling */
 .form-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 50px auto;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-  }
-  
-  .form-input {
-    width: 90%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-  }
-  
-  .form-button {
-    width: 95%;
-    padding: 10px;
-    margin: 20px 0;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
-  }
-  
-  .form-button:hover {
-    background-color: #0056b3;
-  }
+  flex: 1; /* Takes up equal space with the image container */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff; /* White background for the form container */
+  border-right: 1px solid #ccc; /* Border between form and image */
+  padding: 20px; /* Add padding for spacing inside the form container */
+  border-radius: 5px 0px 0px 5px;
+}
+
+/* Image container styling */
+.image-container {
+  flex: 1; /* Takes up equal space with the form container */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f4f4f4; /* Light background for contrast */
+  padding: 20px; /* Add padding for spacing inside the image container */
+  border-radius: 0px 5px 5px 0px;
+}
+
+/* Image styling */
+.image {
+  max-width: 70%;
+  max-height: 70%;
+  object-fit: cover; /* Ensures image covers container without distortion */
+}
+
+/* Inner container for the form */
+.inner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* Align items to stretch full width */
+  justify-content: center;
+  padding: 30px;
+  border: 2px solid #D80030;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 340px;
+  background-color: #fff; /* White background for the form container */
+}
+
+/* Grouping form elements */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px; /* Space between form groups */
+}
+
+/* Label styling */
+.form-label {
+  margin-bottom: 5px; /* Space below the label */
+  font-size: 14px; /* Font size for the label */
+  color: #333; /* Dark gray color for the label */
+}
+
+/* Input fields styling */
+.form-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  font-size: 17px; /* Larger font size for readability */
+  transition: border-color 0.2s ease-in-out; /* Smooth border color transition */
+}
+
+/* Focus state for inputs */
+.form-input:focus {
+  border-color: #489090; /* Blue border on focus */
+  outline: none; /* Remove default outline */
+  box-shadow: 0 0 0 2px #489090; /* Subtle shadow to highlight focus */
+}
+
+/* Button styling */
+.form-button {
+  width: 100%;
+  padding: 12px;
+  margin: 20px 0;
+  background-color: #489090;
+  color: #ffffff;
+  border-color: #489090;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px; /* Larger font size for readability */
+  transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out; /* Smooth transitions */
+}
+
+/* Button hover effect */
+.form-button:hover {
+  color: #489090; /* Text color on hover */
+  background-color: #ffffff; /* Background color on hover */
+  border-color: #489090;
+}
+
+/* Button active effect */
+.form-button:active {
+  transform: scale(0.98); /* Slightly scale down on click for a pressing effect */
+}
+
+/* Form title styling */
+.form-title {
+  font-size: 24px; /* Larger title for emphasis */
+  margin-bottom: 20px; /* Spacing below title */
+  color: #333; /* Dark gray for better contrast */
+}
+
+/* Additional styling for links, if any */
+.form-link {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.form-link:hover {
+  text-decoration: underline;
+}
+
+h1 {
+  font-size: 2.5rem; /* Larger font size */
+  font-weight: 200; /* Bold font weight */
+  text-align: center; /* Center align text */
+  color: #403438; /* Dark gray color */
+  margin-bottom: 1.5rem; /* Space below the title */
+  -webkit-background-clip: text; /* Clip background to text */
+  -webkit-text-fill-color: transparent; /* Make text color transparent to show gradient */
+  text-shadow: 1px 1px 1px #D80030; /* Subtle shadow for depth */
+  padding: 0.5rem; /* Padding around the text */
+  letter-spacing: 10px;
+  text-transform: uppercase;
+}
+
+/* Center the loading indicator */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0; /* Add spacing above and below the loading indicator */
+}
+
+/* Footer text below the form */
+.form-footer-text {
+  font-size: 14px; /* Smaller font size for footer text */
+  color: #333; /* Dark gray color for better contrast */
+  margin-top: 10px; /* Space above the footer text */
+  text-align: left; /* Align text to the left */
+}
+
+/* Styling for the footer link */
+.form-footer-text .form-link {
+  color: #007bff; /* Blue color for the link */
+  text-decoration: none; /* Remove underline by default */
+}
+
+.form-footer-text .form-link:hover {
+  text-decoration: underline; /* Underline the link on hover */
+}

@@ -30,7 +30,12 @@ const GeneratedScript = ({ show, onClose, scriptContent }) => {
     };
     return (
         <>
-            <div className={`modal fade ${show ? 'show d-block' : ''}`} tabIndex="-1" role="dialog" style={{ display: show ? 'block' : 'none', zIndex: 1050 }}>
+            <div 
+                className={`modal fade ${show ? 'show d-block' : ''}`} 
+                tabIndex="-1" 
+                role="dialog" 
+                style={{ display: show ? 'block' : 'none', zIndex: 1050, marginTop: '70px' }}
+            >
             <div className="modal-dialog modal-dialog-scrollable" role="document" style={{ maxWidth: '75%' }}> 
                     <div className="modal-content" style={{ zIndex: 1060 }}>
                         <div className="modal-header">
