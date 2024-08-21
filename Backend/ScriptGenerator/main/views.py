@@ -10,9 +10,9 @@ from rest_framework import generics # type: ignore
 from .serializers import UserSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny # type: ignore
 from django.http import JsonResponse
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
+from rest_framework.decorators import api_view # type: ignore
+from rest_framework.response import Response # type: ignore
+from rest_framework import status # type: ignore
 
 
 IP_PLAN_COLUMNS = {

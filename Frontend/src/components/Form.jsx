@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/no-unescaped-entities */
 import { useState, useEffect } from "react";
 import api from "../api";
@@ -6,6 +7,8 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import "../styles/Form.css";
 import LoadingIndicator from "./LoadingIndicator";
 import huaweiImage from "../assets/Huawei.svg";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // eslint-disable-next-line react/prop-types
 function Form({ route, method }) {
@@ -17,7 +20,7 @@ function Form({ route, method }) {
     const name = method === "login" ? "Login" : "Register";
 
     useEffect(() => {
-        document.title = name; // Change the title
+        document.title = name; 
     }, [name]);
 
     const handleSubmit = async (e) => {
@@ -34,7 +37,8 @@ function Form({ route, method }) {
                 navigate("/login");
             }
         } catch (error) {
-            alert(error);
+            toast.error("An error occurred. Please try again.");
+            
         } finally {
             setLoading(false);
         }
@@ -91,6 +95,7 @@ function Form({ route, method }) {
                     <img src={huaweiImage} alt="Huawei Logo" className="image" />
                 </div>
             </div>
+            <ToastContainer />
         </div>
     );
 }
