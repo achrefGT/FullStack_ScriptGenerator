@@ -1,5 +1,6 @@
 from django.db import models
 from django.forms import ValidationError
+from django.contrib.auth.models import User
 
 class LowLevelDesign(models.Model):
     file = models.FileField(null=True, blank=True)
@@ -38,6 +39,8 @@ class LowLevelDesign(models.Model):
 class LowLevelDesign_Co_trans(LowLevelDesign):
     o_and_m = models.GenericIPAddressField(null=True, blank=True)  
     TDD = models.GenericIPAddressField(null=True, blank=True)
+    o_and_m_next = models.GenericIPAddressField(null=True, blank=True)  
+    TDD_next = models.GenericIPAddressField(null=True, blank=True)
 
     def clean(self):
         # Custom validation to ensure IP addresses are valid
@@ -50,9 +53,9 @@ class LowLevelDesign_Co_trans(LowLevelDesign):
         # Iterate through each router associated with this LowLevelDesign
         for router in self.routers.all():
             result.content += f"\n------------------------------------------------\nrouter: {router.name}\n------------------------------------------------\n"
-            result.content += f"dis bgp vpnv4 vpn-instance 3G-MP routing-table {self.o_and_m} 30\ndis bgp vpnv4 vpn-instance 4G_UP&CP routing-table {self.TDD} 30\n"
-            result.content += f"\nip route-static vpn-instance 3G-MP {self.o_and_m} 255.255.255.252 192.168.2.34 description TO_3G-MP_{radioSite}_CO_TRANS\n"
-            result.content += f"\nip route-static vpn-instance 4G_UP&CP {self.TDD} 255.255.255.252 192.168.3.34 description TO_4G_UP&CP_{radioSite}_CO_TRANS\n"
+            result.content += f"display bgp vpnv4 vpn-instance 3G-MP routing-table {self.o_and_m} 30\ndisplay bgp vpnv4 vpn-instance 4G_UP&CP routing-table {self.TDD} 30\n"
+            result.content += f"\nip route-static vpn-instance 3G-MP {self.o_and_m} 255.255.255.252 {self.o_and_m_next} description TO_3G-MP_{radioSite}_CO_TRANS"
+            result.content += f"\nip route-static vpn-instance 4G_UP&CP {self.TDD} 255.255.255.252 {self.TDD_next} description TO_4G_UP&CP_{radioSite}_CO_TRANS\n"
 
         result.save()
         return result
@@ -124,6 +127,8 @@ class ManagementInterface(LogicalInterface):
 
 class Script(models.Model):
     content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Scripts", null=True, blank=True)
 
     def __str__(self):
         return self.content

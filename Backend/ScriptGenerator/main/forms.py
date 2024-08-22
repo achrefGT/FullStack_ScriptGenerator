@@ -1,8 +1,8 @@
 from django import forms
 from django.forms import FileInput, inlineformset_factory
 from .models import Script, LowLevelDesign, Router, PhysicalInterface, Interface2G, Interface3G, Interface4G, ManagementInterface, RadioSite  # Import RadioSite
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Field, Fieldset, ButtonHolder, Submit
+from crispy_forms.helper import FormHelper # type: ignore
+from crispy_forms.layout import Layout, Field, Fieldset, ButtonHolder, Submit # type: ignore
 
 
 
