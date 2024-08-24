@@ -7,6 +7,7 @@ from .models import Router, PhysicalInterface, Interface2G, Interface3G, Interfa
 from .forms import LowLevelDesignForm
 from .constants import *
 from .serializers import ScriptSerializer, UserSerializer
+from .utils import get_column_value,validate_ip_address
 
 from rest_framework import generics, status # type: ignore
 from rest_framework.permissions import IsAuthenticated, AllowAny # type: ignore
@@ -22,21 +23,6 @@ class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
-
-
-def get_column_value(row, column_name, column_index, sheet_name):
-    """
-    Try to get the value by column name; if it fails, use the column index.
-    If both fail, raise an error with details about the column and sheet.
-    """
-    try:
-        return row[column_name]
-    except KeyError:
-        result = row[column_index]
-        if not pd.isna(result):  
-            return result
-    
-        raise ValueError(f"Failed to find the column '{column_name}' in sheet '{sheet_name}'.")
 
 
 @api_view(['POST'])
@@ -160,7 +146,7 @@ def upload_lld_api(request):
             
             # Generate the script
             script = lld.generateScript()  
-            return Response({"script_content": script.content}, status=status.HTTP_200_OK)
+            return Response({"script_content": script.content, "id":script.id}, status=status.HTTP_200_OK)
 
     except Exception as e:
         print("Error occurred:", str(e))  # Debug: Print the error to the console
@@ -181,10 +167,23 @@ def upload_lld_Co_Trans_api(request):
             lld_data_df = pd.read_excel(excel_file, sheet_name=0)  
             # Create LowLevelDesign instance
             lld = LowLevelDesign_Co_trans.objects.create(file=excel_file) 
+            
+            o_and_m_next_ip = request.POST.get('o_and_m_next')
+            tdd_next_ip = request.POST.get('TDD_next')
 
-            lld.o_and_m_next = request.POST.get('o_and_m_next')
-            lld.TDD_next = request.POST.get('TDD_next')
+            if not validate_ip_address(o_and_m_next_ip) and not validate_ip_address(tdd_next_ip):
+                return Response({"error": "Invalid IP addresses."}, status=status.HTTP_400_BAD_REQUEST)
 
+            if not validate_ip_address(o_and_m_next_ip):
+                return Response({"error": "Invalid IP address for O&M Next."}, status=status.HTTP_400_BAD_REQUEST)
+
+            if not validate_ip_address(tdd_next_ip):
+                return Response({"error": "Invalid IP address for TDD Next."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+            lld.o_and_m_next = o_and_m_next_ip
+            lld.TDD_next = tdd_next_ip
+    
             # Process the first row of the DataFrame (assuming it contains the data)
             for _, row in lld_data_df[1:].iterrows():
 
@@ -203,24 +202,25 @@ def upload_lld_Co_Trans_api(request):
                     lld.save()
             # Generate the script
             script = lld.generateScript(site_name)
-            return Response({"script_content": script.content}, status=status.HTTP_200_OK)
+            return Response({"script_content": script.content, "id":script.id}, status=status.HTTP_200_OK)
 
     except Exception as e:
-        print("Error occurred:", str(e))  # Debug: Print the error to the console
+        print("Error occurred:", str(e))  
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     return Response({"error": "Invalid form submission"}, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['PUT'])
 def edit_script(request, pk):
     try:
         script = Script.objects.get(pk=pk)
     except Script.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'Script not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    
-    serializer = ScriptSerializer(script, data=request.data,context={'request': request})
+    serializer = ScriptSerializer(script, data=request.data, context={'request': request})
     if serializer.is_valid():
         serializer.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+

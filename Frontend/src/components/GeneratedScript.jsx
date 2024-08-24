@@ -3,7 +3,7 @@ import React from 'react';
 import api from "../api";
 
 // eslint-disable-next-line react/prop-types
-const GeneratedScript = ({ show, onClose, scriptContent }) => {
+const GeneratedScript = ({ show, onClose, scriptContent, edit, setEdit, editedScriptContent, setEditedScriptContent, handleSaveEdit }) => {
     const handleDownload = async () => {
         try {
             // Create a FormData object to send the script content
@@ -28,6 +28,7 @@ const GeneratedScript = ({ show, onClose, scriptContent }) => {
             console.error('Error downloading the script:', error);
         }
     };
+
     return (
         <>
             <div 
@@ -39,7 +40,7 @@ const GeneratedScript = ({ show, onClose, scriptContent }) => {
             <div className="modal-dialog modal-dialog-scrollable" role="document" style={{ maxWidth: '75%' }}> 
                     <div className="modal-content" style={{ zIndex: 1060 }}>
                         <div className="modal-header">
-                            <h5 className="modal-title">Generated Script</h5>
+                            <h4 className="modal-title">Generated Script</h4>
                             <button
                                 type="button"
                                 className="btn-close"
@@ -47,12 +48,32 @@ const GeneratedScript = ({ show, onClose, scriptContent }) => {
                                 aria-label="Close"
                             ></button>
                         </div>
-                        <div className="modal-body" style={{ maxHeight: '500px', overflowY: 'auto' }}>
-                            <textarea className="form-control" rows="18" readOnly value={scriptContent} />
+                        <div className="modal-body" style={{ maxHeight: '490', overflowY: 'auto' }}>
+                            {!edit ? (
+                                <textarea className="form-control" rows="17" readOnly value={scriptContent} />
+                            ) : (
+                                <textarea 
+                                    className="form-control" 
+                                    rows="18" 
+                                    value={editedScriptContent} 
+                                    onChange={(e) => setEditedScriptContent(e.target.value)} 
+                                />
+                            )}
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-custom-outline" onClick={handleDownload}>Download Script</button>
-                            <button type="button" className="btn btn-secondary" onClick={onClose}>Close</button>
+                            {!edit ? (
+                                <>
+                                    <div className="btn-group">
+                                        <button type="button" className="btn btn-custom-outline" onClick={handleDownload}>Download Script</button>
+                                        <button type="button" className="btn btn-secondary" onClick={() => setEdit(true)}>Edit Script</button>
+                                    </div>
+                                    
+                                </>
+                            ) : (
+                                <>
+                                    <button type="button" className="btn btn-custom-outline" onClick={handleSaveEdit}>Save Edits</button>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -10,7 +10,7 @@ urlpatterns = [
     path('upload-lld-api/', views.upload_lld_api, name='upload_lld_api'),
     path('upload-lld-Co-Trans-api/', views.upload_lld_Co_Trans_api, name='upload_lld_Co_Trans_api'),
     path('download-script-api/', views.download_script_api, name='download_script_api'),
-    path('edit-script/', views.edit_script, name='edit_script'),
+    path('edit-script/<int:pk>/', views.edit_script, name='edit_script'),
 
     path("user/register/", views.CreateUserView.as_view(), name="register"),
     path("token/", TokenObtainPairView.as_view(), name="get_token"),

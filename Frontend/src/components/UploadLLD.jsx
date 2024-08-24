@@ -11,6 +11,9 @@ function UploadLLD() {
     const [showIPForm, setShowIPForm] = useState(false);
     const [OaMip, setOaMip] = useState('');
     const [TDDip, setTDDip] = useState('');
+    const [edit, setEdit] = useState(false); 
+    const [editedScriptContent, setEditedScriptContent] = useState('');
+    const [scriptId, setScriptId] = useState(null); 
 
     const handleFileChange = (event) => {
         setFile(event.target.files[0]);
@@ -46,23 +49,60 @@ function UploadLLD() {
             });
 
             setScriptContent(response.data.script_content);
+            setEditedScriptContent(response.data.script_content); 
+            setScriptId(response.data.id); 
             setError('');
             setShowModal(true);
 
         } catch (err) {
-            setError('An error occurred while uploading the file.');
+            if (err.response && err.response.data && err.response.data.error) {
+                setError(err.response.data.error);
+            } else {
+                setError('An error occurred while uploading the file.');
+            }
         }
     };
 
     const handleCoTransClick = (event) => {
         event.preventDefault();
-        setShowIPForm(true); // Show IP form when Co-Trans is clicked
+        setShowIPForm(true); 
     };
 
     const handleCloseModal = () => {
         setShowModal(false);
-        setShowIPForm(false); // Hide IP form when closing the modal
+        setShowIPForm(false); 
     };
+
+    const handleEditClick = () => {
+        setEdit(true);
+    };
+
+    const handleSaveEdit = async () => {
+        if (!scriptId) {
+            console.error('Script ID is missing.');
+            return;
+        }
+    
+        try {
+            const response = await api.put(`/edit-script/${scriptId}/`, {
+                content: editedScriptContent,  // Ensure this matches the serializer field name
+            });
+    
+            if (response.status === 204) {
+                console.log('Script saved successfully.');
+                setScriptContent(editedScriptContent);
+                setEdit(false);
+                setShowModal(true);
+            } else {
+                console.error('Failed to save the script:', response.statusText);
+            }
+    
+        } catch (error) {
+            console.error('Error saving the script:', error);
+        }
+    };
+    
+    
 
     return (
         <div className="container mt-5 d-flex justify-content-center align-items-center" style={{ minHeight: '70vh' }}>
@@ -85,7 +125,7 @@ function UploadLLD() {
                                 <div className="mb-3">
                                     <input
                                         type="text"
-                                        placeholder="O&M next hop @"
+                                        placeholder="O&M next hop address"
                                         value={OaMip}
                                         onChange={(e) => setOaMip(e.target.value)}
                                         name="o_and_m_next"
@@ -95,7 +135,7 @@ function UploadLLD() {
                                 <div className="mb-3">
                                     <input
                                         type="text"
-                                        placeholder="TDD next hop @"
+                                        placeholder="TDD next hop address"
                                         value={TDDip}
                                         onChange={(e) => setTDDip(e.target.value)}
                                         name="TDD_next"
@@ -123,7 +163,6 @@ function UploadLLD() {
                             </div>
                         )}
                         
-
                         {showIPForm && (
                             <div className="mt-3">
                                 <div className="btn-group d-flex" style={{ width: '100%' }}>
@@ -141,11 +180,15 @@ function UploadLLD() {
                 </div>
             </div>
 
-            {/* Generated Script Modal */}
             <GeneratedScript
                 show={showModal}
                 onClose={handleCloseModal}
                 scriptContent={scriptContent}
+                edit={edit}
+                setEdit={setEdit}
+                editedScriptContent={editedScriptContent}
+                setEditedScriptContent={setEditedScriptContent}
+                handleSaveEdit={handleSaveEdit}
             />
         </div>
     );
