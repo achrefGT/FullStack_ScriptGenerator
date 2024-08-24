@@ -1,3 +1,5 @@
+import "../styles/Navbar.css";
+
 const Navbar = () => {
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -13,10 +15,22 @@ const Navbar = () => {
                             <a className="nav-link" href="#">My scripts</a>
                         </li>
                     </ul>
-                    <div className="btn-group">
-                        <a className="btn btn-custom-outline" href="/logout" role="button">logout</a>
-                        <a className="btn btn-custom-outline" href="http://127.0.0.1:8000/admin/" role="button">admin</a>
-                    </div>
+                    <ul className="navbar-nav">
+                        <li className="nav-item d-flex align-items-center">
+                            
+                            <a className="nav-link" href="/logout"><img src="src/assets/logout.svg" alt="logout" style={{ width: '18px', marginBottom: '2px', marginRight: '5px' }} />Logout</a>
+                        </li>
+
+                        <li className="nav-item separator">
+                            <span>|</span>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link" href="http://127.0.0.1:8000/admin/">Admin</a>
+                        </li>
+                    </ul>
+
+
+
                     
                 </div>
             </div>

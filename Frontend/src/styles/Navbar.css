@@ -1,0 +1,27 @@
+.navbar-nav {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .nav-item {
+    margin: 0 10px; /* Adjust as needed for spacing between items */
+  }
+  
+  .nav-link {
+    text-decoration: none;
+    font-weight: 500; /* Semi-bold text */
+    transition: color 0.3s; /* Smooth color transition */
+  }
+  
+  .nav-link:hover {
+    color: #489090; 
+  }
+  
+  .separator {
+    margin: 0 10px; /* Adjust spacing around the separator */
+    color: #D80030; /* Color for the separator */
+  }
+  

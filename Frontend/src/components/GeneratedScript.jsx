@@ -6,20 +6,20 @@ import api from "../api";
 const GeneratedScript = ({ show, onClose, scriptContent, edit, setEdit, editedScriptContent, setEditedScriptContent, handleSaveEdit }) => {
     const handleDownload = async () => {
         try {
-            // Create a FormData object to send the script content
+            
             const formData = new FormData();
             formData.append('script_content', scriptContent);
 
-            // Send a POST request to the Django API
+            
             const response = await api.post('/download-script-api/', formData, {
-                responseType: 'blob', // Important for handling file downloads
+                responseType: 'blob', 
             });
 
-            // Create a URL for the file download
+           
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', 'script.txt'); // Set the filename for the download
+            link.setAttribute('download', 'script.txt'); 
             document.body.appendChild(link);
             link.click();
             link.remove();
@@ -41,12 +41,12 @@ const GeneratedScript = ({ show, onClose, scriptContent, edit, setEdit, editedSc
                     <div className="modal-content" style={{ zIndex: 1060 }}>
                         <div className="modal-header">
                             <h4 className="modal-title">Generated Script</h4>
-                            <button
-                                type="button"
-                                className="btn-close"
-                                onClick={onClose}
-                                aria-label="Close"
-                            ></button>
+                            <div className="outer">
+                                <div className="inner" onClick={onClose}>
+                                    <label>Back</label>
+                                </div>
+                            </div>
+                            
                         </div>
                         <div className="modal-body" style={{ maxHeight: '490', overflowY: 'auto' }}>
                             {!edit ? (
@@ -64,8 +64,8 @@ const GeneratedScript = ({ show, onClose, scriptContent, edit, setEdit, editedSc
                             {!edit ? (
                                 <>
                                     <div className="btn-group">
-                                        <button type="button" className="btn btn-custom-outline" onClick={handleDownload}>Download Script</button>
-                                        <button type="button" className="btn btn-secondary" onClick={() => setEdit(true)}>Edit Script</button>
+                                        <button type="button" className="btn btn-custom-outline" onClick={handleDownload}><img src="src/assets/download.svg" alt="download" style={{ width: '18px',marginBottom: '3px', marginRight: '5px' }} />Download</button>
+                                        <button type="button" className="btn btn-outline-secondary" onClick={() => setEdit(true)}><img src="src/assets/edit.svg" alt="edit" style={{ width: '18px',marginBottom: '3px', marginRight: '5px' }} />Edit</button>
                                     </div>
                                     
                                 </>

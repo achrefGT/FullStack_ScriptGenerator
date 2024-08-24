@@ -16,7 +16,7 @@ h2 {
 .btn-custom-outline {
   color: #489090;
   border-color: #489090;
-  background-color: #ffffff; /* Default background color */
+  background-color: transparent; 
 }
 
 .btn-custom-outline:hover {
@@ -33,6 +33,7 @@ h2 {
   margin-bottom: 20px; 
 }
 
+
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -42,4 +43,91 @@ h2 {
   background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
   z-index: 1040; /* Ensure it's below the modal */
 }
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.8rem; 
+  font-weight: 300; 
+  color: #489090; 
+  padding: 0 15px;  
+  letter-spacing: 2px;
+}
+
+.modal-footer {
+
+  background-color: #f8f9fa;
+}
+
+.outer {
+  position: relative;
+  width: 25px; 
+  cursor: pointer;
+}
+
+.inner {
+  width: inherit;
+  position: absolute;
+  right: 0; 
+  top: 50%;
+  transform: translateY(-50%); 
+}
+
+
+label { 
+  font-size: .6em; 
+  line-height: 2em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+  color: #489090;
+  transition: all .3s ease-in;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.inner:before, .inner:after {
+  position: absolute;
+  content: '';
+  height: 1px;
+  width: inherit;
+  background: #D80030;
+  left: 0;
+  transition: all .3s ease-in;
+}
+
+.inner:before {
+  top: 50%; 
+  transform: rotate(45deg);  
+}
+
+.inner:after {  
+  bottom: 50%;
+  transform: rotate(-45deg);  
+}
+
+.outer:hover label {
+  opacity: 1;
+}
+
+.outer:hover .inner:before,
+.outer:hover .inner:after {
+  transform: rotate(0);
+}
+
+.outer:hover .inner:before {
+  top: 0;
+}
+
+.outer:hover .inner:after {
+  bottom: 0;
+}
+
+
+
 
