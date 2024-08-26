@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from .models import Router, PhysicalInterface, Interface2G, Interface3G, Interface4G, ManagementInterface, LowLevelDesign, LowLevelDesign_Co_trans,RadioSite, Script
 from .forms import LowLevelDesignForm
 from .constants import *
-from .serializers import ScriptSerializer, UserSerializer
+from .serializers import LowLevelDesignSerializer, ScriptSerializer, UserSerializer
 from .utils import get_column_value,validate_ip_address
 
 from rest_framework import generics, status # type: ignore
@@ -23,6 +23,19 @@ class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
+
+class ScripListCreate(generics.ListCreateAPIView):
+    serializer_class = ScriptSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Get the currently authenticated user
+        user = self.request.user
+        
+        # Return scripts that belong to the authenticated user
+        return Script.objects.filter(lld__user=user)
+
+
 
 
 @api_view(['POST'])
@@ -78,7 +91,7 @@ def upload_lld_api(request):
                 interface_4g_df = pd.read_excel(xls, sheet_name=3)  # Fallback to the fourth sheet
 
             # Create a LowLevelDesign instance
-            lld = LowLevelDesign.objects.create(file=excel_file)  
+            lld = LowLevelDesign.objects.create(file=excel_file, user=request.user)  
 
             # Process IP Plan sheet
             for _, row in ip_plan_df.iloc[1:].iterrows():
@@ -145,8 +158,14 @@ def upload_lld_api(request):
                 )
             
             # Generate the script
-            script = lld.generateScript()  
-            return Response({"script_content": script.content, "id":script.id}, status=status.HTTP_200_OK)
+            script = lld.generateScript() 
+
+            # Save the script with the user attribute
+            script.lld = lld
+            script.save()
+
+            lld_serializer = LowLevelDesignSerializer(lld)
+            return Response({"script_content": script.content, "lld": lld_serializer.data, "id":script.id}, status=status.HTTP_200_OK) 
 
     except Exception as e:
         print("Error occurred:", str(e))  # Debug: Print the error to the console
@@ -161,13 +180,13 @@ def upload_lld_Co_Trans_api(request):
         # Initialize the form with the POST data and files
         form = LowLevelDesignForm(request.POST, request.FILES)
 
-
-        if form.is_valid():          
+        if form.is_valid():
             excel_file = request.FILES['file']
-            lld_data_df = pd.read_excel(excel_file, sheet_name=0)  
-            # Create LowLevelDesign instance
-            lld = LowLevelDesign_Co_trans.objects.create(file=excel_file) 
-            
+            lld_data_df = pd.read_excel(excel_file, sheet_name=0)
+
+            # Create LowLevelDesign instance with user and created_at attribute
+            lld = LowLevelDesign_Co_trans.objects.create(file=excel_file, user=request.user)
+
             o_and_m_next_ip = request.POST.get('o_and_m_next')
             tdd_next_ip = request.POST.get('TDD_next')
 
@@ -180,19 +199,15 @@ def upload_lld_Co_Trans_api(request):
             if not validate_ip_address(tdd_next_ip):
                 return Response({"error": "Invalid IP address for TDD Next."}, status=status.HTTP_400_BAD_REQUEST)
 
-
             lld.o_and_m_next = o_and_m_next_ip
             lld.TDD_next = tdd_next_ip
-    
+
             # Process the first row of the DataFrame (assuming it contains the data)
             for _, row in lld_data_df[1:].iterrows():
-
                 router_name = get_column_value(row, 'NE40/NE8000', LLD_CO_TRANS_COLUMNS['NE40/NE8000'], 'Sheet1')
                 site_name = get_column_value(row, 'site  ', LLD_CO_TRANS_COLUMNS['site  '], 'Sheet1')
                 o_and_m_ip = get_column_value(row, 'Config O&M', LLD_CO_TRANS_COLUMNS['Config O&M'], 'Sheet1')
                 tdd_ip = get_column_value(row, 'Config TDD', LLD_CO_TRANS_COLUMNS['Config TDD'], 'Sheet1')
-
-
 
                 if router_name and site_name:
                     router, created = Router.objects.get_or_create(name=router_name, lld=lld)
@@ -200,15 +215,23 @@ def upload_lld_Co_Trans_api(request):
                     lld.o_and_m = o_and_m_ip
                     lld.TDD = tdd_ip
                     lld.save()
+                    
             # Generate the script
             script = lld.generateScript(site_name)
-            return Response({"script_content": script.content, "id":script.id}, status=status.HTTP_200_OK)
+            
+            # Save the script with the user attribute
+            script.lld = lld
+            script.save()
+
+            lld_serializer = LowLevelDesignSerializer(lld)
+            return Response({"script_content": script.content, "lld": lld_serializer.data, "id":script.id}, status=status.HTTP_200_OK)
 
     except Exception as e:
-        print("Error occurred:", str(e))  
+        print("Error occurred:", str(e))
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     return Response({"error": "Invalid form submission"}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 @api_view(['PUT'])
@@ -223,4 +246,3 @@ def edit_script(request, pk):
         serializer.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
     return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-

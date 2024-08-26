@@ -3,7 +3,7 @@ import React from 'react';
 import api from "../api";
 
 // eslint-disable-next-line react/prop-types
-const GeneratedScript = ({ show, onClose, scriptContent, edit, setEdit, editedScriptContent, setEditedScriptContent, handleSaveEdit }) => {
+const GeneratedScript = ({ show, onClose, scriptContent}) => {
     const handleDownload = async () => {
         try {
             
@@ -49,31 +49,12 @@ const GeneratedScript = ({ show, onClose, scriptContent, edit, setEdit, editedSc
                             
                         </div>
                         <div className="modal-body" style={{ maxHeight: '490', overflowY: 'auto' }}>
-                            {!edit ? (
-                                <textarea className="form-control" rows="17" readOnly value={scriptContent} />
-                            ) : (
-                                <textarea 
-                                    className="form-control" 
-                                    rows="18" 
-                                    value={editedScriptContent} 
-                                    onChange={(e) => setEditedScriptContent(e.target.value)} 
-                                />
-                            )}
+                            <textarea className="form-control" rows="17" readOnly value={scriptContent} />
                         </div>
                         <div className="modal-footer">
-                            {!edit ? (
-                                <>
-                                    <div className="btn-group">
-                                        <button type="button" className="btn btn-custom-outline" onClick={handleDownload}><img src="src/assets/download.svg" alt="download" style={{ width: '18px',marginBottom: '3px', marginRight: '5px' }} />Download</button>
-                                        <button type="button" className="btn btn-outline-secondary" onClick={() => setEdit(true)}><img src="src/assets/edit.svg" alt="edit" style={{ width: '18px',marginBottom: '3px', marginRight: '5px' }} />Edit</button>
-                                    </div>
-                                    
-                                </>
-                            ) : (
-                                <>
-                                    <button type="button" className="btn btn-custom-outline" onClick={handleSaveEdit}>Save Edits</button>
-                                </>
-                            )}
+                            <div className="btn-group">
+                                <button type="button" className="btn btn-custom-outline" onClick={handleDownload}><img src="src/assets/download.svg" alt="download" style={{ width: '18px',marginBottom: '3px', marginRight: '5px' }} />Download</button>
+                            </div>
                         </div>
                     </div>
                 </div>

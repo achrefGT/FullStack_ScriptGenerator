@@ -5,6 +5,7 @@ import Login from "./pages/Login"
 import Register from "./pages/Register"
 import Home from "./pages/Home"
 import NotFound from "./pages/NotFound"
+import MyScripts from "./pages/MyScripts"
 import ProtectedRoute from "./components/ProtectedRoute"
 
 
@@ -33,6 +34,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/register" element={<RegisterAndLogout />} />
+        <Route path="/MyScripts" element={<MyScripts />} />
         <Route path="*" element={<NotFound />}></Route>
       </Routes>
     </BrowserRouter>

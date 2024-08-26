@@ -1,5 +1,3 @@
-
-
 h2 {
   font-size: 2.5rem; /* Larger font size */
   font-weight: 100; /* Bold font weight */
@@ -80,7 +78,7 @@ h2 {
 }
 
 
-label { 
+.inner-label { 
   font-size: .6em; 
   line-height: 2em;
   text-transform: uppercase;

@@ -1,0 +1,68 @@
+/* Center the script container on the page */
+/* Container for the page */
+.page-container {
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Center horizontally */
+    padding: 16px; /* Padding around the container */
+}
+
+/* Container for each script */
+.script-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #ddd; /* Light gray border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 8px; /* Padding inside the container */
+    margin: 5px; /* Margin between script containers */
+    background-color: #fff; /* White background */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+    max-width: 1000px; /* Max width of the script container */
+    width: 100%; /* Full width up to max-width */
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effects */
+}
+
+/* Hover effect for script containers */
+.script-container:hover {
+    background-color: #f6f6f6; /* Light gray background on hover */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+/* Heading for the script ID */
+.script-container h3 {
+    margin-top: 2px; /* Remove top margin */
+    color: #333; /* Darker text color */
+    font-size: 1em; /* Slightly larger font size */
+}
+
+/* Display created date */
+.script-container p {
+    margin-top: 10px; 
+    color: #666; /* Medium gray text color */
+    font-size: 0.9em; /* Slightly smaller font size */
+}
+
+.view-button {
+    background-color: #fff; /* Background color */
+    border: none; /* Remove border */
+    border-radius: 50%; /* Make the button circular */
+    width: 50px; /* Width of the button */
+    height: 50px; /* Height of the button */
+    display: flex; /* Flexbox for centering content */
+    align-items: center; /* Center items vertically */
+    justify-content: center; /* Center items horizontally */
+    cursor: pointer; /* Pointer cursor on hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional shadow */
+    transition: background-color 0.3s; /* Smooth color transition */
+}
+
+.view-button:hover {
+    background-color: #489090; /* Darker background on hover */
+}
+
+.view-button img {
+    width: 20px; /* Adjust icon size */
+    height: 20px; /* Adjust icon size */
+}
+

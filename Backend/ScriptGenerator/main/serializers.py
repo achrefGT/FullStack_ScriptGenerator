@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers # type: ignore
-from .models import Script
+from .models import LowLevelDesign, Script
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,5 +16,11 @@ class UserSerializer(serializers.ModelSerializer):
 class ScriptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Script
-        fields = ["id", "content", "created_at", "user"]
+        fields = ["id", "content", "created_at"]
+
+
+class LowLevelDesignSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LowLevelDesign
+        fields = ["id", "file", "created_at", "user"]
         extra_kwargs = {"user": {"read_only": True}}

@@ -1,9 +1,12 @@
+from django.utils import timezone
 from django.db import models
 from django.forms import ValidationError
 from django.contrib.auth.models import User
 
 class LowLevelDesign(models.Model):
     file = models.FileField(null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="LLDs", null=True, blank=True)
+    created_at = models.DateTimeField(default=timezone.now)
 
     def generateScript(self):
         result = Script(content="")
@@ -127,8 +130,8 @@ class ManagementInterface(LogicalInterface):
 
 class Script(models.Model):
     content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Scripts", null=True, blank=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    lld = models.OneToOneField(LowLevelDesign, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.content

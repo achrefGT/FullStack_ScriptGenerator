@@ -85,7 +85,7 @@ function UploadLLD() {
     
         try {
             const response = await api.put(`/edit-script/${scriptId}/`, {
-                content: editedScriptContent,  // Ensure this matches the serializer field name
+                content: editedScriptContent, 
             });
     
             if (response.status === 204) {
