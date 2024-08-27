@@ -8,8 +8,8 @@ import '../styles/Script.css';
 
 function getFirstDayOfWeek(d) {
     const date = new Date(d);
-    const day = date.getDay(); // Get day of week
-    const diff = date.getDate() - day + (day === 0 ? -6 : 1); // Adjust to Monday
+    const day = date.getDay(); 
+    const diff = date.getDate() - day + (day === 0 ? -6 : 1); 
     return new Date(date.setDate(diff));
 }
 
@@ -19,7 +19,7 @@ const isThisWeek = (date) => {
     const lastDayOfWeek = new Date(firstDayOfWeek);
     lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6);
 
-    // Reset time for accurate comparison
+    
     date.setHours(0, 0, 0, 0);
     firstDayOfWeek.setHours(0, 0, 0, 0);
     lastDayOfWeek.setHours(23, 59, 59, 999);
