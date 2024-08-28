@@ -39,44 +39,44 @@ class LowLevelDesign(models.Model):
         result.save()
         return result
     
-class LowLevelDesign_Co_trans(LowLevelDesign):
-    o_and_m = models.GenericIPAddressField(null=True, blank=True)  
-    TDD = models.GenericIPAddressField(null=True, blank=True)
-    o_and_m_next = models.GenericIPAddressField(null=True, blank=True)  
-    TDD_next = models.GenericIPAddressField(null=True, blank=True)
-
-    def clean(self):
-        # Custom validation to ensure IP addresses are valid
-        if not self.o_and_m or not self.TDD:
-            raise ValidationError("Both O&M and TDD IP addresses must be provided.")
-
-    def generateScript(self,radioSite):
+    def generateScript_Co_Trans(self):
         result = Script(content="")
         
         # Iterate through each router associated with this LowLevelDesign
         for router in self.routers.all():
             result.content += f"\n------------------------------------------------\nrouter: {router.name}\n------------------------------------------------\n"
-            result.content += f"display bgp vpnv4 vpn-instance 3G-MP routing-table {self.o_and_m} 30\ndisplay bgp vpnv4 vpn-instance 4G_UP&CP routing-table {self.TDD} 30\n"
-            result.content += f"\nip route-static vpn-instance 3G-MP {self.o_and_m} 255.255.255.252 {self.o_and_m_next} description TO_3G-MP_{radioSite}_CO_TRANS"
-            result.content += f"\nip route-static vpn-instance 4G_UP&CP {self.TDD} 255.255.255.252 {self.TDD_next} description TO_4G_UP&CP_{radioSite}_CO_TRANS\n"
+            result.content += f"display bgp vpnv4 vpn-instance 3G-MP routing-table {router.o_and_m_route.destination} 30\ndisplay bgp vpnv4 vpn-instance 4G_UP&CP routing-table {router.tdd_route.destination} 30\n"
+            result.content += f"\nip route-static vpn-instance 3G-MP {router.o_and_m_route.destination} 255.255.255.252 {router.o_and_m_route.next_hop} description TO_3G-MP_{router.o_and_m_route.radio_site}_CO_TRANS"
+            result.content += f"\nip route-static vpn-instance 4G_UP&CP {router.tdd_route.destination} 255.255.255.252 {router.tdd_route.next_hop} description TO_4G_UP&CP_{router.tdd_route.radio_site}_CO_TRANS\n"
 
         result.save()
         return result
-
-
-class Router(models.Model):
-    name = models.CharField(max_length=255)
-    lld = models.ForeignKey(LowLevelDesign, on_delete=models.CASCADE, related_name='routers')
-
-    def __str__(self):
-        return self.name
-
+    
 class RadioSite(models.Model):
     name = models.CharField(max_length=255)
     lld = models.ForeignKey(LowLevelDesign, on_delete=models.CASCADE, related_name='radio_sites')
 
     def __str__(self):
         return self.name
+    
+
+class StaticRoute(models.Model):
+    destination = models.GenericIPAddressField()
+    next_hop = models.GenericIPAddressField()
+    radio_site = models.ForeignKey(RadioSite, on_delete=models.CASCADE, null=True, blank=True, related_name='static_routes')
+
+    def __str__(self):
+        return f"destination : {self.destination}, next-hop : {self.next_hop}"
+
+class Router(models.Model):
+    name = models.CharField(max_length=255)
+    lld = models.ForeignKey('LowLevelDesign', on_delete=models.CASCADE, related_name='routers')
+    o_and_m_route = models.OneToOneField(StaticRoute, on_delete=models.CASCADE, null=True, blank=True, related_name='router_o_and_m')
+    tdd_route = models.OneToOneField(StaticRoute, on_delete=models.CASCADE, null=True, blank=True, related_name='router_tdd')
+
+    def __str__(self):
+        return self.name
+
 
 class PhysicalInterface(models.Model):
     rate = models.CharField(max_length=100) 
@@ -135,3 +135,4 @@ class Script(models.Model):
 
     def __str__(self):
         return self.content
+

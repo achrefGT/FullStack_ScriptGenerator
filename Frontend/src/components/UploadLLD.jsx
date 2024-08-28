@@ -2,15 +2,16 @@
 import { useState } from 'react';
 import api from "../api";
 import GeneratedScript from './GeneratedScript';
+import StaticRoutesForm from './StaticRoutesForm';
+
 
 function UploadLLD() {
     const [file, setFile] = useState(null);
     const [scriptContent, setScriptContent] = useState('');
     const [error, setError] = useState('');
     const [showModal, setShowModal] = useState(false);
-    const [showIPForm, setShowIPForm] = useState(false);
-    const [OaMip, setOaMip] = useState('');
-    const [TDDip, setTDDip] = useState('');
+    const [showForm, setShowForm] = useState(false);
+    const [routers, setRouters] = useState([]);
     const [edit, setEdit] = useState(false); 
     const [editedScriptContent, setEditedScriptContent] = useState('');
     const [scriptId, setScriptId] = useState(null); 
@@ -21,56 +22,64 @@ function UploadLLD() {
 
     const handleSubmit = async (event, endpoint) => {
         event.preventDefault();
-
-        if (endpoint === '/upload-lld-Co-Trans-api/') {
-            if (!OaMip || !TDDip) {
-                setError('Please enter both IP addresses.');
-                return;
-            }
-        }
-
+    
         if (!file) {
             setError('Please select a file to upload.');
             return;
         }
-
+    
         const formData = new FormData();
         formData.append('file', file);
+    
         if (endpoint === '/upload-lld-Co-Trans-api/') {
-            formData.append('o_and_m_next', OaMip);
-            formData.append('TDD_next', TDDip);
-        }
-
-        try {
-            const response = await api.post(endpoint, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-
-            setScriptContent(response.data.script_content);
-            setEditedScriptContent(response.data.script_content); 
-            setScriptId(response.data.id); 
-            setError('');
-            setShowModal(true);
-
-        } catch (err) {
-            if (err.response && err.response.data && err.response.data.error) {
-                setError(err.response.data.error);
-            } else {
-                setError('An error occurred while uploading the file.');
+            try {
+                const response = await api.post(endpoint, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+    
+                // Extract routers from the response
+                const { routers } = response.data.lld;
+                setRouters(routers);
+                setShowForm(true);
+                setError('');
+            } catch (err) {
+                if (err.response && err.response.data && err.response.data.error) {
+                    setError(err.response.data.error);
+                } else {
+                    setError('An error occurred while uploading the file.');
+                }
+            }
+        } else {
+            try {
+                const response = await api.post(endpoint, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+    
+                setScriptContent(response.data.script_content);
+                setEditedScriptContent(response.data.script_content); 
+                setScriptId(response.data.id); 
+                setError('');
+                setShowModal(true);
+            } catch (err) {
+                if (err.response && err.response.data && err.response.data.error) {
+                    setError(err.response.data.error);
+                } else {
+                    setError('An error occurred while uploading the file.');
+                }
             }
         }
     };
-
-    const handleCoTransClick = (event) => {
-        event.preventDefault();
-        setShowIPForm(true); 
+    
+    const handleCloseForm = () => {
+        setShowForm(false);
     };
 
     const handleCloseModal = () => {
         setShowModal(false);
-        setShowIPForm(false); 
     };
 
     const handleEditClick = () => {
@@ -119,63 +128,22 @@ function UploadLLD() {
                             onChange={handleFileChange}
                             className="custom-file-input form-control mb-3"
                         />
-
-                        {showIPForm && (
-                            <>
-                                <div className="mb-3">
-                                    <input
-                                        type="text"
-                                        placeholder="O&M next hop address"
-                                        value={OaMip}
-                                        onChange={(e) => setOaMip(e.target.value)}
-                                        name="o_and_m_next"
-                                        className="form-control"
-                                    />
-                                </div>
-                                <div className="mb-3">
-                                    <input
-                                        type="text"
-                                        placeholder="TDD next hop address"
-                                        value={TDDip}
-                                        onChange={(e) => setTDDip(e.target.value)}
-                                        name="TDD_next"
-                                        className="form-control"
-                                    />
-                                </div>
-                            </>
-                        )}
-                        {!showIPForm && (
-                            <div className="btn-group d-flex" style={{ width: '100%' }}>
-                                <button
-                                    type="button"
-                                    onClick={(e) => handleSubmit(e, '/upload-lld-api/')}
-                                    className="btn btn-custom-outline"
-                                >
-                                    Trans-Dediers
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={handleCoTransClick}
-                                    className="btn btn-custom-outline"
-                                >
-                                    Co-Trans
-                                </button>
-                            </div>
-                        )}
-                        
-                        {showIPForm && (
-                            <div className="mt-3">
-                                <div className="btn-group d-flex" style={{ width: '100%' }}>
-                                    <button
-                                        type="button"
-                                        onClick={(e) => handleSubmit(e, '/upload-lld-Co-Trans-api/')}
-                                        className="btn btn-custom-outline"
-                                    >
-                                        Upload
-                                    </button>
-                                </div>
-                            </div>
-                        )}
+                        <div className="btn-group d-flex" style={{ width: '100%' }}>
+                            <button
+                                type="button"
+                                onClick={(e) => handleSubmit(e, '/upload-lld-api/')}
+                                className="btn btn-custom-outline"
+                            >
+                                Trans-Dediers
+                            </button>
+                            <button
+                                type="button"
+                                onClick={(e) => handleSubmit(e, '/upload-lld-Co-Trans-api/')}
+                                className="btn btn-custom-outline"
+                            >
+                                Co-Trans
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -190,6 +158,13 @@ function UploadLLD() {
                 setEditedScriptContent={setEditedScriptContent}
                 handleSaveEdit={handleSaveEdit}
             />
+
+            <StaticRoutesForm
+                show={showForm}
+                onClose={handleCloseForm}
+                routers={routers}
+            />
+
         </div>
     );
 }

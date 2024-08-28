@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 
-from .models import Router, PhysicalInterface, Interface2G, Interface3G, Interface4G, ManagementInterface, LowLevelDesign, LowLevelDesign_Co_trans,RadioSite, Script
+from .models import Router, PhysicalInterface, Interface2G, Interface3G, Interface4G, ManagementInterface, LowLevelDesign, LowLevelDesign,RadioSite, Script, StaticRoute
 from .forms import LowLevelDesignForm
 from .constants import *
 from .serializers import LowLevelDesignSerializer, ScriptSerializer, UserSerializer
@@ -175,6 +175,15 @@ def upload_lld_api(request):
 
 
 @api_view(['POST'])
+def static_routes_Co_Trans(request):
+
+    return
+
+
+
+
+
+@api_view(['POST'])
 def upload_lld_Co_Trans_api(request):
     try:
         # Initialize the form with the POST data and files
@@ -185,24 +194,9 @@ def upload_lld_Co_Trans_api(request):
             lld_data_df = pd.read_excel(excel_file, sheet_name=0)
 
             # Create LowLevelDesign instance with user and created_at attribute
-            lld = LowLevelDesign_Co_trans.objects.create(file=excel_file, user=request.user)
+            lld = LowLevelDesign.objects.create(file=excel_file, user=request.user)
 
-            o_and_m_next_ip = request.POST.get('o_and_m_next')
-            tdd_next_ip = request.POST.get('TDD_next')
-
-            if not validate_ip_address(o_and_m_next_ip) and not validate_ip_address(tdd_next_ip):
-                return Response({"error": "Invalid IP addresses."}, status=status.HTTP_400_BAD_REQUEST)
-
-            if not validate_ip_address(o_and_m_next_ip):
-                return Response({"error": "Invalid IP address for O&M Next."}, status=status.HTTP_400_BAD_REQUEST)
-
-            if not validate_ip_address(tdd_next_ip):
-                return Response({"error": "Invalid IP address for TDD Next."}, status=status.HTTP_400_BAD_REQUEST)
-
-            lld.o_and_m_next = o_and_m_next_ip
-            lld.TDD_next = tdd_next_ip
-
-            # Process the first row of the DataFrame (assuming it contains the data)
+            # Process the rows of the DataFrame (assuming it contains the data)
             for _, row in lld_data_df[1:].iterrows():
                 router_name = get_column_value(row, 'NE40/NE8000', LLD_CO_TRANS_COLUMNS['NE40/NE8000'], 'Sheet1')
                 site_name = get_column_value(row, 'site  ', LLD_CO_TRANS_COLUMNS['site  '], 'Sheet1')
@@ -210,28 +204,37 @@ def upload_lld_Co_Trans_api(request):
                 tdd_ip = get_column_value(row, 'Config TDD', LLD_CO_TRANS_COLUMNS['Config TDD'], 'Sheet1')
 
                 if router_name and site_name:
-                    router, created = Router.objects.get_or_create(name=router_name, lld=lld)
-                    radio_site, created = RadioSite.objects.get_or_create(name=site_name, lld=lld)
-                    lld.o_and_m = o_and_m_ip
-                    lld.TDD = tdd_ip
-                    lld.save()
-                    
-            # Generate the script
-            script = lld.generateScript(site_name)
-            
-            # Save the script with the user attribute
-            script.lld = lld
-            script.save()
+                    radio_site, _ = RadioSite.objects.get_or_create(name=site_name, lld=lld)
+                    tdd_route = StaticRoute.objects.create(
+                        destination=tdd_ip,
+                        next_hop=tdd_ip,
+                        radio_site=radio_site
+                    )
 
+                    # Create the O&M static route
+                    o_and_m_route = StaticRoute.objects.create(
+                        destination=o_and_m_ip,
+                        next_hop=o_and_m_ip,
+                        radio_site=radio_site
+                    )
+
+                    router, _ = Router.objects.get_or_create(name=router_name, lld=lld)
+
+                    # Assign the static routes to the router
+                    router.o_and_m_route = o_and_m_route
+                    router.tdd_route = tdd_route
+                    router.save()
+
+            lld.save()
             lld_serializer = LowLevelDesignSerializer(lld)
-            return Response({"script_content": script.content, "lld": lld_serializer.data, "id":script.id}, status=status.HTTP_200_OK)
+
+            return Response({"lld": lld_serializer.data}, status=status.HTTP_200_OK)
 
     except Exception as e:
         print("Error occurred:", str(e))
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     return Response({"error": "Invalid form submission"}, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 @api_view(['PUT'])
@@ -246,3 +249,47 @@ def edit_script(request, pk):
         serializer.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
     return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+@api_view(['PUT'])
+def update_static_routes(request):
+    routes_data = request.data.get('routes', [])
+    lld = None  # Initialize lld as None to handle cases where no valid router is found
+
+    for route in routes_data:
+        router_id = route.get('router_id')
+        o_and_m_next = route.get('o_and_m_next')
+        tdd_next = route.get('tdd_next')
+
+        try:
+            router = Router.objects.get(pk=router_id)
+            lld = router.lld  # Associate lld with the router's LLD
+            
+            # Update O&M Route
+            if o_and_m_next:
+                StaticRoute.objects.filter(router_o_and_m=router).update(next_hop=o_and_m_next)
+            
+            # Update TDD Route
+            if tdd_next:
+                StaticRoute.objects.filter(router_tdd=router).update(next_hop=tdd_next)
+
+        except Router.DoesNotExist:
+            continue
+
+    if lld is not None:  # Ensure lld is not None before generating the script
+        if hasattr(lld, 'script'):
+            # Update the existing script
+            script = lld.script
+            script.content = lld.generateScript_Co_Trans().content
+        else:
+            # Create a new script
+            script = lld.generateScript_Co_Trans()
+            script.lld = lld
+        
+        script.save()
+        lld_serializer = LowLevelDesignSerializer(lld)
+
+        return Response({"script_content": script.content, "lld": lld_serializer.data, "id": script.id}, status=status.HTTP_200_OK)
+    
+    return Response({"detail": "No valid routers found"}, status=status.HTTP_400_BAD_REQUEST)
