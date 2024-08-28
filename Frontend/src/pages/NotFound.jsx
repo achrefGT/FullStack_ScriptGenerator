@@ -2,38 +2,25 @@
 import "../styles/NotFound.css"; 
 
 function NotFound() {
-    return <><div className="moon"></div><div className="moon__crater moon__crater1"></div><div className="moon__crater moon__crater2"></div><div className="moon__crater moon__crater3"></div><div className="star star1"></div><div className="star star2"></div><div className="star star3"></div><div className="star star4"></div><div className="star star5"></div><div className="error">
-        <div className="error__title">404</div>
-        <div className="error__subtitle">UH OH! You're lost.</div>
-        <div className="error__description">The page you are looking for does not exist.</div>
-
-    </div><div className="astronaut">
-            <div className="astronaut__backpack"></div>
-            <div className="astronaut__body"></div>
-            <div className="astronaut__body__chest"></div>
-            <div className="astronaut__arm-left1"></div>
-            <div className="astronaut__arm-left2"></div>
-            <div className="astronaut__arm-right1"></div>
-            <div className="astronaut__arm-right2"></div>
-            <div className="astronaut__arm-thumb-left"></div>
-            <div className="astronaut__arm-thumb-right"></div>
-            <div className="astronaut__leg-left"></div>
-            <div className="astronaut__leg-right"></div>
-            <div className="astronaut__foot-left"></div>
-            <div className="astronaut__foot-right"></div>
-            <div className="astronaut__wrist-left"></div>
-            <div className="astronaut__wrist-right"></div>
-
-            <div className="astronaut__cord">
-                <canvas id="cord" height="500px" width="500px"></canvas>
+    return (
+        <>
+            <div id="clouds">
+                <div className="cloud x1"></div>
+                <div className="cloud x1_5"></div>
+                <div className="cloud x2"></div>
+                <div className="cloud x3"></div>
+                <div className="cloud x4"></div>
+                <div className="cloud x5"></div>
             </div>
-
-            <div className="astronaut__head">
-                <canvas id="visor" width="60px" height="60px"></canvas>
-                <div className="astronaut__head-visor-flare1"></div>
-                <div className="astronaut__head-visor-flare2"></div>
+            <div className="c">
+                <div className="_404">404</div>
+                <hr />
+                <div className="_1">THE PAGE</div>
+                <div className="_2">WAS NOT FOUND</div>
+                <a className="btn_404" href="/">BACK TO HOME</a>
             </div>
-        </div></>
+        </>
+    );
 }
 
-export default NotFound
+export default NotFound;

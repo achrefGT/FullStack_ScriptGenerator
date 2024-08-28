@@ -116,9 +116,9 @@ function StaticRoutesForm({ show, onClose, routers }) {
                     <div className="modal-body">
                         {routers.map(router => (
                             <div key={router.id} className="mb-4"> {/* Use router ID as key */}
-                                <h5>{router.name}</h5>
+                                <h5 style={{color : 'black'}}>{router.name}</h5>
                                 <div className="d-flex mb-3 align-items-center">
-                                    <label htmlFor={`o_and_m_next_${router.id}`} className="me-2" style={{ width: '150px' }}>
+                                    <label htmlFor={`o_and_m_next_${router.id}`} className="me-2" style={{ width: '150px', color: 'black' }}>
                                         O&M static route
                                     </label>
                                     <input
@@ -132,7 +132,7 @@ function StaticRoutesForm({ show, onClose, routers }) {
                                     />
                                 </div>
                                 <div className="d-flex mb-3 align-items-center">
-                                    <label htmlFor={`tdd_next_${router.id}`} className="me-2" style={{ width: '150px' }}>
+                                    <label htmlFor={`tdd_next_${router.id}`} className="me-2" style={{ width: '150px', color: 'black' }}>
                                         TDD static route
                                     </label>
                                     <input

@@ -19,6 +19,9 @@ import pandas as pd # type: ignore
 def index(request):
     return redirect('http://localhost:5173/')
 
+def custom_404_view(request, exception):
+    return redirect('http://localhost:5173/notFound')
+
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer

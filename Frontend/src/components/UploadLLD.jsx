@@ -45,11 +45,7 @@ function UploadLLD() {
                 setShowForm(true);
                 setError('');
             } catch (err) {
-                if (err.response && err.response.data && err.response.data.error) {
-                    setError(err.response.data.error);
-                } else {
-                    setError('An error occurred while uploading the file.');
-                }
+                setError('An error occurred while uploading the file.');
             }
         } else {
             try {
@@ -65,11 +61,7 @@ function UploadLLD() {
                 setError('');
                 setShowModal(true);
             } catch (err) {
-                if (err.response && err.response.data && err.response.data.error) {
-                    setError(err.response.data.error);
-                } else {
-                    setError('An error occurred while uploading the file.');
-                }
+                setError('An error occurred while uploading the file.');
             }
         }
     };
