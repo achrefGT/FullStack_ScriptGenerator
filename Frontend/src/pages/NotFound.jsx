@@ -14,7 +14,7 @@ function NotFound() {
             </div>
             <div className="c">
                 <div className="_404">404</div>
-                <hr />
+                <hr className="hr_404"/>
                 <div className="_1">THE PAGE</div>
                 <div className="_2">WAS NOT FOUND</div>
                 <a className="btn_404" href="/">BACK TO HOME</a>

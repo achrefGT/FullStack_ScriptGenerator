@@ -35,7 +35,7 @@ body{
                 position: relative;
                 font-size: 20px;
             }
-            .text{
+            .text_404{
                 font-size: 70px;
                 text-align: center;
                 position: relative;
@@ -71,7 +71,7 @@ body{
                 width:60%;
             }
             
-            hr{
+            .hr_404{
                 padding: 0;
                 border: none;
                 border-top: 5px solid #fff;
@@ -83,7 +83,7 @@ body{
                 z-index: -10;
             }
             
-            hr:after {
+            .hr_404:after {
                 content: "\2022";
                 display: inline-block;
                 position: relative;
