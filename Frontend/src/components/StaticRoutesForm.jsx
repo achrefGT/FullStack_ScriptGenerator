@@ -111,7 +111,11 @@ function StaticRoutesForm({ show, onClose, routers }) {
                 <div className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title">Static Routes</h5>
-                        <button type="button" className="btn-close" aria-label="Close" onClick={onClose}></button>
+                        <div className="outer">
+                                <div className="inner" onClick={onClose}>
+                                    <label className="inner-label">Back</label>
+                                </div>
+                            </div>
                     </div>
                     <div className="modal-body">
                         {routers.map(router => (
